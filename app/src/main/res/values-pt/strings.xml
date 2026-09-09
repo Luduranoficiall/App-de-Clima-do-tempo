@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Clima Tempo</string>
+    <string name="search_city_hint">Pesquise uma cidade…</string>
+    <string name="current_location">Sua Localização</string>
+    <string name="today">Hoje</string>
+    <string name="hourly_forecast">Previsão por Hora</string>
+    <string name="daily_forecast">Próximos 7 Dias</string>
+    <string name="weather_details">Condições Meteorológicas</string>
+    <string name="feels_like">Sensação</string>
+    <string name="humidity">Umidade</string>
+    <string name="wind_speed">Vento</string>
+    <string name="uv_index">Índice UV</string>
+    <string name="pressure">Pressão</string>
+    <string name="visibility">Visibilidade</string>
+    <string name="precipitation">Precipitação</string>
+    <string name="sunrise">Nascer do Sol</string>
+    <string name="sunset">Pôr do Sol</string>
+    <string name="favorite_cities">Cidades Salvas</string>
+    <string name="ai_assistant_title">Clima AI • Assistente</string>
+    <string name="ask_ai_hint">Pergunte sobre roupas, planos ou o clima…</string>
+</resources>

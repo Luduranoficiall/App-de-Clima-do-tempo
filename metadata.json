@@ -1,0 +1,9 @@
+{
+  "name": "Clima Tempo",
+  "description": "App de previsão do tempo com localização em tempo real, busca de cidades, previsões horárias e diárias detalhadas, e assistente inteligente de clima.",
+  "requestFramePermissions": [
+    "android.permission.ACCESS_FINE_LOCATION",
+    "android.permission.ACCESS_COARSE_LOCATION"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Clima Tempo</string>
+    <string name="search_city_hint">Search a city…</string>
+    <string name="current_location">Your Location</string>
+    <string name="today">Today</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="daily_forecast">7-Day Forecast</string>
+    <string name="weather_details">Weather Details</string>
+    <string name="feels_like">Feels Like</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind</string>
+    <string name="uv_index">UV Index</string>
+    <string name="pressure">Pressure</string>
+    <string name="visibility">Visibility</string>
+    <string name="precipitation">Precipitation</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="favorite_cities">Saved Cities</string>
+    <string name="ai_assistant_title">Clima AI • Assistant</string>
+    <string name="ask_ai_hint">Ask about clothing, outdoor plans, or weather…</string>
+</resources>
