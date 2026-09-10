@@ -1,171 +1,107 @@
-# ☀️ Clima Tempo (Weather & Climate App)
+# Clima Tempo — previsão do tempo nativa Android com IA
 
-> **Aplicativo meteorológico inteligente, visual e multilíngue para Android construído com Jetpack Compose, Gemini AI e dados em tempo real da Open-Meteo.**
+App de previsão do tempo com localização em tempo real, busca de qualquer cidade do mundo,
+previsão horária e de 7 dias, e um assistente de IA (Gemini) que dá conselho prático sobre o
+clima em vez de só mostrar número. Kotlin + Jetpack Compose.
 
-[![Android](https://img.shields.io/badge/Plataforma-Android%2014%2B-green.svg)](https://developer.android.com)
-[![Kotlin](https://img.shields.io/badge/Kotlin-2.0%2B-purple.svg)](https://kotlinlang.org)
-[![Jetpack Compose](https://img.shields.io/badge/UI-Jetpack%20Compose%20M3-4285F4.svg)](https://developer.android.com/jetpack/compose)
-[![AI](https://img.shields.io/badge/IA-Gemini%203.5%20Flash-orange.svg)](https://ai.google.dev)
-[![Licença](https://img.shields.io/badge/Licença-MIT-blue.svg)](LICENSE)
+## Índice
 
----
+- [O que o app faz](#o-que-o-app-faz)
+- [Clima AI: como o assistente funciona de verdade](#clima-ai-como-o-assistente-funciona-de-verdade)
+- [Como rodar](#como-rodar)
+- [Arquitetura](#arquitetura)
+- [Testes](#testes)
+- [Estrutura de arquivos](#estrutura-de-arquivos)
+- [O que é MVP de propósito](#o-que-é-mvp-de-propósito)
 
-## 📑 Sumário
+## O que o app faz
 
-1. [Visão Geral](#-visão-geral)
-2. [Principais Funcionalidades](#-principais-funcionalidades)
-3. [Suporte Multilíngue (PT-BR, ES, EN)](#-suporte-multilíngue)
-4. [Inteligência Artificial Humanizada (Clima AI)](#-inteligência-artificial-humanizada-clima-ai)
-5. [Arquitetura & Engenharia do Projeto](#-arquitetura--engenharia-do-projeto)
-6. [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-7. [Como Executar o Projeto](#-como-executar-o-projeto)
-8. [Configuração de Chaves (API Keys)](#-configuração-de-chaves-api-keys)
-9. [Guia de Uso para Clientes e Usuários Finais](#-guia-de-uso-para-clientes-e-usuários-finais)
-10. [Testes Automatizados](#-testes-automatizados)
+- **Localização em tempo real** (GPS) com pedido de permissão em runtime, e **busca global de
+  cidade** por nome, com estado/país.
+- **Cidades favoritas e recentes**, salvas localmente (Room), sem depender de conta ou nuvem.
+- **Previsão horária (24h)** e **estendida (7 dias)**, com temperatura mínima/máxima, chance de
+  chuva, umidade, vento (velocidade e direção cardeal), índice UV, nascer e pôr do sol.
+- **Dados meteorológicos via Open-Meteo**, API pública sem necessidade de chave paga.
+- **3 idiomas** (Português, Espanhol, Inglês), trocável a qualquer momento sem reiniciar o app.
+- **Clima AI**: assistente que responde em linguagem natural (ex.: "o que vestir hoje?", "vai
+  chover mais tarde?") usando os dados reais da previsão carregada.
 
----
+## Clima AI: como o assistente funciona de verdade
 
-## 🌟 Visão Geral
+O assistente usa a API do Gemini quando há uma chave configurada (`GEMINI_API_KEY` no `.env`) e
+a chamada de rede funciona. Isso é verificado no código, não é suposição: sem chave configurada,
+com a chave de exemplo do `.env.example`, ou se a chamada à API falhar por qualquer motivo
+(sem internet, erro do servidor), o app cai automaticamente num **motor de heurística local**
+(`generateLocalHumanAdvice`, em `GeminiService.kt`) que continua dando conselho de vestuário e
+atividade a partir dos números reais da previsão — só não é gerado por um modelo de linguagem
+nesse modo. Ou seja: o assistente nunca fica mudo, com ou sem IA de verdade configurada.
 
-O **Clima Tempo** é um aplicativo mobile moderno projetado para oferecer previsões meteorológicas precisas, hiper-visuais e intuitivas. Desenvolvido sob as diretrizes do **Material Design 3 (M3)**, o app adapta gradientes dinâmicos conforme as condições do céu (ensolarado, nublado, chuvoso, tempestade) e o horário do dia (dia ou noite), proporcionando uma experiência imersiva e agradável.
+## Como rodar
 
-Além dos dados tradicionais de temperatura, sensação térmica, umidade e vento, o app conta com o **Clima AI**, um assistente que se comunica de maneira **humana, calorosa e prática**, auxiliando na escolha de vestuário, práticas esportivas e cuidados preventivos.
+App Android nativo (Kotlin/Jetpack Compose), não tem versão web. Pra rodar:
 
----
+```bash
+# Android Studio (recomendado): abrir a pasta do projeto e rodar num emulador ou aparelho.
+# Ou via linha de comando, com Android SDK instalado e configurado:
+./gradlew assembleDebug     # gera o APK de debug
+./gradlew installDebug      # instala no aparelho/emulador conectado
+```
 
-## 🚀 Principais Funcionalidades
+Precisa de JDK 17+ e Android SDK (compileSdk 36) instalados. Sem eles, o Gradle não compila —
+mesmo os testes locais (Robolectric) dependem do SDK pra achar os stubs de `android.jar`.
 
-- 📍 **Localização em Tempo Real (GPS)**: Detecção automática da cidade atual do usuário com permissões em tempo de execução.
-- 🔍 **Busca Global de Cidades**: Autocomplete rápido com geocodificação mundial, trazendo cidades com seus respectivos estados e países.
-- ⭐ **Cidades Favoritas & Recentes**: Salve múltiplos locais com persistência offline usando o **Room Database**.
-- ⏱️ **Previsão Horária (24 Horas)**: Carrossel com temperaturas a cada hora, ícones do tempo e probabilidades de chuva.
-- 📅 **Previsão Estendida para 7 Dias**: Visualização com barras térmicas proporcionais (mínima e máxima) e índice de precipitação.
-- 📊 **Métricas Atmosféricas Detalhadas**:
-  - Sensação térmica e comparação com a temperatura real.
-  - Umidade relativa do ar com níveis de conforto.
-  - Velocidade e direção cardeal do vento (N, NE, L, S, SO, etc.).
-  - Índice de radiação UV e alertas de intensidade.
-  - Horários exatos do nascer e pôr do sol.
-- 🎨 **Transições Visuais Fluidas**: Fundo reativo com animações suaves de degradê e ícones vetoriais modernos.
+Pra ativar o Clima AI com o Gemini de verdade (opcional, o app funciona sem isso):
 
----
+```env
+# .env, copiado de .env.example
+GEMINI_API_KEY=sua_chave_aqui
+```
 
-## 🌐 Suporte Multilíngue
+## Arquitetura
 
-O aplicativo foi projetado para atender o público da América Latina, Espanha e internacional, com suporte prioritário para:
+MVVM: `WeatherViewModel` mantém o estado da tela em `StateFlow`, delega busca de dados ao
+`WeatherRepository`, que combina a API pública Open-Meteo (`OpenMeteoService`, via Retrofit) com
+o cache local de cidades favoritas (Room). O Clima AI é uma chamada separada
+(`GeminiService`) que só entra quando o usuário abre o assistente.
 
-| Idioma | Bandeira | Descrição |
-| :--- | :---: | :--- |
-| **Português (Brasil)** | 🇧🇷 | Idioma padrão com termos e expressões regionais naturais |
-| **Español** | 🇪🇸 | Tradução completa para o público hispânico |
-| **English** | 🇺🇸 | Tradução universal para usuários internacionais |
-
-O usuário pode alternar o idioma **a qualquer momento** usando o seletor rápido no topo da tela principal, sem necessidade de reiniciar o aplicativo.
-
----
-
-## 🤖 Inteligência Artificial Humanizada (Clima AI)
-
-Diferente de sistemas robóticos convencionais, o **Clima AI** foi instruído para agir como um **amigo próximo e atencioso**:
-- **Tom Acolhedor**: Respostas gentis, empáticas e práticas.
-- **Dicas de Vestuário**: Recomendações de roupas leves, casacos pesados ou capas de chuva com base nos graus e sensação térmica.
-- **Planejamento de Atividades**: Orientações seguras para caminhadas, corridas e passeios ao ar livre.
-- **Perguntas Rápidas (Chips)**: Toque direto para dúvidas frequentes (*"O que vestir hoje?"*, *"Vai chover mais tarde?"*, *"É bom para correr ao ar livre?"*).
-
----
-
-## 🏗️ Arquitetura & Engenharia do Projeto
-
-O projeto segue os princípios de **Clean Architecture** e **MVVM (Model-View-ViewModel)** recomendados pelo Google:
-
-```text
+```
 com.example
 ├── data
-│   ├── api          # Consumo REST da Open-Meteo & Google Gemini API
-│   ├── db           # Banco de dados local Room (Entity, DAO, Database)
-│   ├── location     # Provedor de localização via FusedLocationProviderClient
-│   └── repository   # WeatherRepository (Única fonte de verdade)
+│   ├── api          Open-Meteo (previsão) e Gemini (assistente), via Retrofit/OkHttp
+│   ├── db           Room: cidades salvas
+│   ├── location     FusedLocationProviderClient
+│   └── repository   WeatherRepository, fonte única de verdade da tela
 ├── ui
-│   ├── components   # Componentes modulares Jetpack Compose (Cards, Sheets, Carousel)
-│   ├── model        # Modelos de UI (WeatherDetails, DailyForecast, AppLanguage)
-│   ├── theme        # Cores, Tipografia e Sistema de Design Material 3
-│   ├── util         # WeatherLocalization (Gestor central de localização)
-│   ├── WeatherScreen.kt    # Tela e navegação principal
-│   └── WeatherViewModel.kt # Gerenciamento de estado reativo (StateFlow)
-└── MainActivity.kt  # Ponto de entrada da aplicação
+│   ├── components   cards, carrossel horário, folha de busca, folha do Clima AI
+│   ├── model        modelos de UI e o enum WeatherType (mapeia código WMO -> ícone/descrição)
+│   ├── theme        Material 3
+│   ├── util         WeatherLocalization (PT/ES/EN)
+│   ├── WeatherScreen.kt
+│   └── WeatherViewModel.kt
+└── MainActivity.kt
 ```
 
----
+## Testes
 
-## 🛠️ Tecnologias Utilizadas
+`ExampleRobolectricTest.kt` tem 3 testes reais (não é só o boilerplate padrão do Android
+Studio): verifica se o código meteorológico WMO da Open-Meteo mapeia pro texto certo em
+português, espanhol e inglês (`WeatherType.fromWmo`), e se `WeatherLocalization.getTodayLabel`
+traduz certo nos três idiomas. `GreetingScreenshotTest.kt` também é real, apesar do nome
+genérico: captura uma screenshot do `CurrentWeatherCard` de verdade com dado de exemplo, via
+Roborazzi. Só `ExampleUnitTest.kt` (2+2=4) é puro boilerplate sem relação com o app.
 
-- **Kotlin & Coroutines/Flow**: Programação reativa assíncrona para chamadas de rede e banco de dados.
-- **Jetpack Compose**: Interface declarativa com suporte a Material Design 3.
-- **Room Persistence Library**: Armazenamento SQLite local de cidades favoritas.
-- **Retrofit & Moshi**: Comunicação REST eficiente e desserialização JSON tipada.
-- **Open-Meteo API**: Dados meteorológicos globais em tempo real sem necessidade de chaves pagas.
-- **Google Gemini API**: Modelos de linguagem de última geração para assistência contextual.
-- **Robolectric & Roborazzi**: Testes de unidade rápidos na JVM e testes visuais de regressão de tela.
+Este ambiente de desenvolvimento não consegue baixar o Android SDK, então não dá pra rodar
+`./gradlew testDebugUnitTest` aqui pra confirmar que os 3 testes reais passam — isso precisa
+ser verificado num Android Studio local antes de qualquer entrega.
 
----
+## Estrutura de arquivos
 
-## 💻 Como Executar o Projeto
+Ver diagrama em [Arquitetura](#arquitetura) acima — é a estrutura real de pastas do projeto.
 
-### Pré-requisitos
-1. **Android Studio Ladybug / Jellyfish (ou mais recente)** instalado.
-2. **JDK 17 ou 21** configurado.
-3. Dispositivo físico ou Emulador com **Android 8.0 (API 26) ou superior**.
+## O que é MVP de propósito
 
-### Passos
-```bash
-# 1. Clone o repositório
-git clone https://github.com/seu-usuario/clima-tempo.git
-
-# 2. Acesse a pasta do projeto
-cd clima-tempo
-
-# 3. Compile e execute os testes de unidade
-./gradlew testDebugUnitTest
-
-# 4. Instale o APK no dispositivo conectado
-./gradlew installDebug
-```
-
----
-
-## 🔑 Configuração de Chaves (API Keys)
-
-O aplicativo consome previsões da Open-Meteo sem exigir chaves. Para ativar os recursos avançados de IA com o **Google Gemini**:
-
-1. Crie um arquivo `.env` na raiz do projeto (copie a partir de `.env.example`):
-   ```env
-   GEMINI_API_KEY=sua_chave_aqui
-   ```
-2. Caso não configure uma chave, o aplicativo ativa automaticamente o **Modo Inteligente Local**, garantindo respostas e dicas funcionais mesmo sem conexão com a API da Gemini.
-
----
-
-## 👥 Guia de Uso para Clientes e Usuários Finais
-
-1. **Permissão de Localização**: Ao abrir pela primeira vez, autorize a localização para visualizar automaticamente o clima da sua rua ou bairro.
-2. **Ver Outras Cidades**: Toque no ícone de lupa 🔍 ou no nome da cidade para buscar qualquer cidade do planeta.
-3. **Salvar Favoritas**: Toque no ícone de coração ❤️ para salvar a cidade na sua lista de acesso rápido.
-4. **Mudar Idioma**: No topo da tela, toque nas opções 🇧🇷 **PT**, 🇪🇸 **ES** ou 🇺🇸 **EN** para alternar a língua em tempo real.
-5. **Conversar com o Clima AI**: Toque no botão flutuante **Clima AI** no canto inferior direito para tirar qualquer dúvida sobre o clima com o assistente inteligente.
-
----
-
-## 🧪 Testes Automatizados
-
-O projeto conta com uma suíte de testes na JVM para garantir estabilidade contínua:
-- `ExampleRobolectricTest`: Validação de recursos de strings, mapeamento de códigos meteorológicos WMO e precisão das traduções em português, espanhol e inglês.
-- `GreetingScreenshotTest`: Teste de regressão visual com Roborazzi para garantir a fidelidade do layout em telas de diferentes densidades (ex: Pixel 8).
-
-Para rodar os testes:
-```bash
-./gradlew :app:testDebugUnitTest
-```
-
----
-
-*Desenvolvido com foco em excelência visual, performance e usabilidade.*
+- **Sem cache de previsão offline**: a tela precisa de internet pra buscar dado novo (cidades
+  favoritas ficam salvas, a previsão em si não).
+- **Sem push notification** de mudança brusca de clima ou alerta de tempestade.
+- **Cobertura de teste real, mas parcial**: cobre mapeamento de código WMO e tradução, não
+  cobre `WeatherRepository` nem o fluxo de fallback do Clima AI.
